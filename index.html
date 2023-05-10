@@ -6,28 +6,53 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #161b22;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
-        #calendar {
+        #time {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 1.5em;
+        }
+        #calendar-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+        .calendar {
             display: inline-grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
             text-align: center;
+            margin: 0 10px;
+            font-size: 1.3em;
         }
         .day {
             padding: 5px;
-            border: 1px solid #fff;
+            border: 1px solid #ccc;
         }
         .current-day {
-            background-color: #ccc;
-            color: #ccc;
+            background-color: #3f51b5;
+            color: #fff;
+        }
+        .month-name {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-    <h1>Aktualna data i czas</h1>
-    <p id="time"></p>
-    <p id="dayOfWeek"></p>
-    <div id="calendar"></div>
+    <div id="time"></div>
+    <div id="calendar-container"></div>
 
     <script>
         function updateClock() {
@@ -38,40 +63,39 @@
             document.getElementById('time').textContent = `Aktualna godzina: ${hours}:${minutes}:${seconds}`;
         }
 
-        function displayDayOfWeek() {
-            const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+        function displayCalendar(monthOffset = 0) {
             const now = new Date();
-            const day = daysOfWeek[now.getDay()];
-            document.getElementById('dayOfWeek').textContent = `Dzień tygodnia: ${day}`;
-        }
-
-        function displayCalendar() {
-            const now = new Date();
+            now.setMonth(now.getMonth() + monthOffset);
             const year = now.getFullYear();
             const month = now.getMonth();
 
             const firstDayOfMonth = new Date(year, month, 1);
             const lastDayOfMonth = new Date(year, month + 1, 0);
 
-            const calendar = document.getElementById('calendar');
-            calendar.innerHTML = '';
+            const calendarContainer = document.getElementById('calendar-container');
+            const calendarElement = document.createElement('div');
+            calendarElement.className = 'calendar';
+
+            const monthNameElement = document.createElement('div');
+            monthNameElement.className = 'month-name';
+            monthNameElement.textContent = now.toLocaleString('pl-PL', { month: 'long' });
+            calendarElement.appendChild(monthNameElement);
 
             for (let i = 1 - firstDayOfMonth.getDay(); i <= lastDayOfMonth.getDate(); i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'day';
                 if (i > 0 && i <= lastDayOfMonth.getDate()) {
                     dayElement.textContent = i;
-                    if (i === now.getDate()) {
+                    if (i === new Date().getDate() && monthOffset === 0) {
                         dayElement.classList.add('current-day');
                     }
                 }
-                calendar.appendChild(dayElement);
+                calendarElement.appendChild(dayElement);
             }
+
+            calendarContainer.appendChild(calendarElement);
         }
 
         setInterval(updateClock, 1000);
-        displayDayOfWeek();
-        displayCalendar();
-    </script>
-</body>
-</html>
+        displayCalendar(-1);  // previous month
+        displayCalendar();  //
