@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Aktualna data i czas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #calendar {
+            display: inline-grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .day {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+        .current-day {
+            background-color: #3f51b5;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aktualna data i czas</h1>
+    <p id="time"></p>
+    <p id="dayOfWeek"></p>
+    <div id="calendar"></div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('time').textContent = `Aktualna godzina: ${hours}:${minutes}:${seconds}`;
+        }
+
+        function displayDayOfWeek() {
+            const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+            const now = new Date();
+            const day = daysOfWeek[now.getDay()];
+            document.getElementById('dayOfWeek').textContent = `Dzień tygodnia: ${day}`;
+        }
+
+        function displayCalendar() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+
+            for (let i = 1 - firstDayOfMonth.getDay(); i <= lastDayOfMonth.getDate(); i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                if (i > 0 && i <= lastDayOfMonth.getDate()) {
+                    dayElement.textContent = i;
+                    if (i === now.getDate()) {
+                        dayElement.classList.add('current-day');
+                    }
+                }
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        displayDayOfWeek();
+        displayCalendar();
+    </script>
+</body>
+</html>
